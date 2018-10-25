@@ -39,6 +39,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.oauth2.AccessToken;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.photos.library.v1.PhotosLibraryClient;
+import com.google.photos.library.v1.PhotosLibrarySettings;
+import com.google.photos.library.v1.proto.Album;
 import com.squareup.picasso.Picasso;
 
 import net.openid.appauth.AuthState;
@@ -52,6 +58,8 @@ import net.openid.appauth.TokenResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,6 +73,7 @@ import okhttp3.Response;
 import static com.google.codelabs.appauth.MainApplication.LOG_TAG;
 
 public class MainActivity extends AppCompatActivity {
+  private static final String TAG = MainActivity.class.getSimpleName();
 
   private static final String SHARED_PREFERENCES_NAME = "AuthStatePreference";
   private static final String AUTH_STATE = "AUTH_STATE";
@@ -201,6 +210,23 @@ public class MainActivity extends AppCompatActivity {
               authState.update(tokenResponse, exception);
               persistAuthState(authState);
               Log.i(LOG_TAG, String.format("Token Response [ Access Token: %s, ID Token: %s ]", tokenResponse.accessToken, tokenResponse.idToken));
+              Calendar expDate = Calendar.getInstance();
+              expDate.setTimeInMillis(tokenResponse.accessTokenExpirationTime);
+              AccessToken accessToken = new AccessToken(tokenResponse.accessToken, expDate.getTime());
+              GoogleCredentials credentials = GoogleCredentials.create(accessToken);
+              try {
+                PhotosLibrarySettings settings = PhotosLibrarySettings.newBuilder()
+                        .setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
+                PhotosLibraryClient client = PhotosLibraryClient.initialize(settings);
+                Album album = client.createAlbum("My Album");
+                if (album != null){
+                  Log.e(TAG,"create success");
+                } else {
+                  Log.e(TAG, "create failed");
+                }
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
             }
           }
         }
