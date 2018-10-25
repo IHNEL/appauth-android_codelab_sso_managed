@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     public static final String json = "{\n" +
-            "\"album\": {\"title\": \"New Album Title\"}\n" +
+            "\"album\": {\"title\": \"This album was create with AndroidStudio\"}\n" +
             "}";
     @Override
     public void onClick(View view) {
