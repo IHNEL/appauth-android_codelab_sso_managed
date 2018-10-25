@@ -55,8 +55,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static com.google.codelabs.appauth.MainApplication.LOG_TAG;
@@ -304,7 +307,11 @@ public class MainActivity extends AppCompatActivity {
       mAuthState = authState;
       mAuthorizationService = authorizationService;
     }
-
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+    public static final String json = "{\n" +
+            "\"album\": {\"title\": \"New Album Title\"}\n" +
+            "}";
     @Override
     public void onClick(View view) {
       mAuthState.performActionWithFreshTokens(mAuthorizationService, new AuthState.AuthStateAction() {
@@ -313,10 +320,12 @@ public class MainActivity extends AppCompatActivity {
           new AsyncTask<String, Void, JSONObject>() {
             @Override
             protected JSONObject doInBackground(String... tokens) {
+              RequestBody formBody = RequestBody.create(JSON, json);
               OkHttpClient client = new OkHttpClient();
               Request request = new Request.Builder()
-                      .url("https://www.googleapis.com/oauth2/v3/userinfo")
+                      .url("https://photoslibrary.googleapis.com/v1/albums")
                       .addHeader("Authorization", String.format("Bearer %s", tokens[0]))
+                      .post(formBody)
                       .build();
 
               try {
