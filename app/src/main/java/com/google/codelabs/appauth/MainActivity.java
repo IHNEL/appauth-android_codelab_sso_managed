@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity {
               Uri.parse("https://www.googleapis.com/oauth2/v4/token") /* token endpoint */
       );
       AuthorizationService authorizationService = new AuthorizationService(view.getContext());
-      String clientId = "511828570984-fuprh0cm7665emlne3rnf9pk34kkn86s.apps.googleusercontent.com";
+      String clientId = "1044911427439-ep59320mqeb2quqiq2g1iq4rcsft6ltk.apps.googleusercontent.com";
       Uri redirectUri = Uri.parse("com.google.codelabs.appauth:/oauth2callback");
       AuthorizationRequest.Builder builder = new AuthorizationRequest.Builder(
               serviceConfiguration,
